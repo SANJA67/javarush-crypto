@@ -19,14 +19,9 @@ public class Crypto {
         System.out.println("Enter shift step. It must be a number between two and five.");
         System.out.println(ALPHABET.length);
         int key = 0;
+
         try {
             key = scanner.nextInt();
-            //if (!(key >= 2 && key <= 5)) {
-
-            System.out.println("Output a number that does not match the condition.");
-            //encryption(lineBuffer);
-            //}
-
         } catch (InputMismatchException e) {
             System.out.println("You didn't enter a number.");
             encrypts(lineBuffer, flagToSelectAction);
@@ -42,12 +37,12 @@ public class Crypto {
                 if (checks(line.charAt(i))) {
                     if (Character.isUpperCase(line.charAt(i))) {
                         encryptedLine[i] =
-                        Character.toUpperCase(ALPHABET[determineEncodingIndex(line.charAt(i),
-                                key, flagToSelectAction, uppercase)]);
+                                Character.toUpperCase(ALPHABET[determineEncodingIndex(line.charAt(i),
+                                        key, flagToSelectAction, uppercase)]);
                     } else {
                         encryptedLine[i] =
-                        ALPHABET[determineEncodingIndex(line.charAt(i),
-                                key, flagToSelectAction, lowerCase)];
+                                ALPHABET[determineEncodingIndex(line.charAt(i),
+                                        key, flagToSelectAction, lowerCase)];
                     }
                 } else {
                     encryptedLine[i] = line.charAt(i);
@@ -68,33 +63,25 @@ public class Crypto {
             key = -1 * key;
         }
         int arrayLengthAdjustment = 1;
-        int index = characterNumber + key - arrayLengthAdjustment;
+        int index = characterNumber + key;
+        int noita = NUMBER_OF_CHARACTERS_IN_THE_ARRAY;
 
 
         if (flag) {
-            if (index > ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY) {
-                System.out.println("Первый проход " + index % (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY));
-                return index % (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY);
-            } else if (index < 0) {
-                System.out.println("Втрой проход " + index % (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY) +
-                        (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY));
-                return index % (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY) +
-                        (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY);
-            } else {
-                System.out.println("Третий проход " + index);
-                return index;
+            int output1 = index % (ALPHABET.length - noita) - arrayLengthAdjustment;
+            System.out.println("Первый проход " + output1);
+            if (output1 < 0) {
+                output1 = output1 + (ALPHABET.length - noita);
             }
+            return output1;
+
         } else {
-            if (index > ALPHABET.length) {
-                System.out.println("Четвертый проход " + index % (ALPHABET.length));
-                return index % (ALPHABET.length);
-            } else if (index < 0) {
-                System.out.println("Пятый проход " + index % (ALPHABET.length) + (ALPHABET.length));
-                return index % (ALPHABET.length) + (ALPHABET.length);
-            } else {
-                System.out.println("Шестой проход " + index);
-                return index;
+            int output2 = index % (ALPHABET.length) - arrayLengthAdjustment;
+            System.out.println("Второй проход " + output2);
+            if (output2 < 0) {
+                output2 = output2 + (ALPHABET.length);
             }
+            return output2;
         }
     }
 
