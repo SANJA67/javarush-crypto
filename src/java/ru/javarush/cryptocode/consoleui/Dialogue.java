@@ -32,8 +32,10 @@ public class Dialogue {
             System.out.println(value);
         }
 
-        lineBuffer = new Crypto().encryption(lineBuffer);
-
+        lineBuffer = new Crypto().encrypts(lineBuffer);
+        for (String value : lineBuffer) {
+            System.out.println(value);
+        }
 /*
         try (BufferedWriter writter = new BufferedWriter(new FileWriter("file2.txt"))) {
             for (String value : array) {
