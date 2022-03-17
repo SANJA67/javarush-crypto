@@ -23,8 +23,8 @@ public class Crypto {
             key = scanner.nextInt();
             //if (!(key >= 2 && key <= 5)) {
 
-                System.out.println("Output a number that does not match the condition.");
-                //encryption(lineBuffer);
+            System.out.println("Output a number that does not match the condition.");
+            //encryption(lineBuffer);
             //}
 
         } catch (InputMismatchException e) {
@@ -54,13 +54,35 @@ public class Crypto {
     }
 
     private int determineEncodingIndex(char charAt, int key) {
-        if (characterNumber + key > ALPHABET.length + ALPHABET.length) {
+        if (Character.isUpperCase(charAt) && characterNumber + key >
+                2 * (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY)) {
+            key -= ALPHABET.length - 2 * NUMBER_OF_CHARACTERS_IN_THE_ARRAY;
+        } else if (characterNumber + key > ALPHABET.length + ALPHABET.length) {
             key -= ALPHABET.length;
         }
+
+        /*
+        System.out.println(ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY);
+
+        if (Character.isUpperCase(charAt) && characterNumber + key > ALPHABET.length + ALPHABET.length) {
+
+            key -= ALPHABET.length;
+        } else {
+            key -= ALPHABET.length;
+        }
+                {'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з',
+            'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ',
+            'ъ', 'ы', 'ь', 'э', 'я', '.', ',', '«', '»', '"', '\'', ':', '!', '?', ' '};
+            (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY) -
+                */
         if (Character.isUpperCase(charAt)) {
             if (characterNumber + key > ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY) {
-                return (characterNumber + key) - (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY) - 1;
+                System.out.println("1 " + ((characterNumber + key) - (ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY) - 1));
+                System.out.println(characterNumber + key);
+                System.out.println(ALPHABET.length - NUMBER_OF_CHARACTERS_IN_THE_ARRAY);
+                return (characterNumber + key) - ALPHABET.length - 1;
             } else {
+                System.out.println("2 " + (characterNumber + key - 1));
                 return characterNumber + key - 1;
             }
 
