@@ -12,6 +12,7 @@ public class Dialogue {
     private boolean flagToSelectAction = true;
     private final String ENCRYPT_FILE = "source file1.txt";
     private final String DECIPHER_FILE = "source file2.txt";
+    private final String RESULT = "result.txt";
     private String workWithFile;
 
     public void start() {
@@ -59,19 +60,19 @@ public class Dialogue {
             System.out.println(value);
         }
 
-        lineBuffer = new Crypto().encrypts(lineBuffer);
+        lineBuffer = new Crypto().encrypts(lineBuffer, flagToSelectAction);
         for (String value : lineBuffer) {
             System.out.println(value);
         }
-/*
-        try (BufferedWriter writter = new BufferedWriter(new FileWriter("source file2.txt"))) {
-            for (String value : array) {
+
+        try (BufferedWriter writter = new BufferedWriter(new FileWriter(RESULT))) {
+            for (String value : lineBuffer) {
                 writter.write(value + "\n");
             }
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-*/
+
     }
 }
