@@ -14,6 +14,7 @@ public class Crypto {
     private static final int NUMBER_OF_CHARACTERS_IN_THE_ARRAY = 10;
 
     public List<String> encrypts(List<String> lineBuffer, boolean flagToSelectAction) {
+
         List<String> copyLineBuffer = new ArrayList<>(lineBuffer);
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the encryption key.");
@@ -30,10 +31,15 @@ public class Crypto {
         char[] encryptedLine;
         boolean uppercase = true;
         boolean lowerCase = false;
+
         for (String line : copyLineBuffer) {
+
             encryptedLine = new char[line.length()];
+
             for (int i = 0; i < line.length(); i++) {
+
                 if (checks(line.charAt(i))) {
+
                     if (Character.isUpperCase(line.charAt(i))) {
                         encryptedLine[i] =
                                 Character.toUpperCase(ALPHABET[determineEncodingIndex(key, flagToSelectAction, uppercase)]);
@@ -88,6 +94,7 @@ public class Crypto {
         symbol = Character.toLowerCase(symbol);
 
         for (Character characterFromArray : ALPHABET) {
+
             characterNumber++;
 
             if (characterFromArray.equals(symbol)) {
