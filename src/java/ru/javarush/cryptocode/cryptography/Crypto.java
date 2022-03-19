@@ -1,24 +1,23 @@
 package ru.javarush.cryptocode.cryptography;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Crypto {
 
     private static final char[] ALPHABET = {'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з',
             'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ',
             'ъ', 'ы', 'ь', 'э', 'я', '.', ',', '«', '»', '"', '\'', ':', '!', '?', ' '};
+
     private int characterNumber;
     private static final int NUMBER_OF_CHARACTERS_IN_THE_ARRAY = 10;
     int key = 0;
+
     List<String> lineBufferConverted;
 
     public List<String> encrypts(List<String> lineBuffer, boolean flagToSelectAction, boolean flagToSelectMethod) {
 
         if (!flagToSelectAction && !flagToSelectMethod) {
-            lineBufferConverted = decodingByStatisticalMethod();
+            lineBufferConverted = decodingByStatisticalMethod(lineBuffer, flagToSelectAction);
         } else {
             lineBufferConverted = workByKey(enterTheKey(), lineBuffer, flagToSelectAction);
 
@@ -57,9 +56,52 @@ public class Crypto {
         return lineBuffer;
     }
 
-    private List<String> decodingByStatisticalMethod() {
+    private List<String> decodingByStatisticalMethod(List<String> lineBuffer, boolean flagToSelectAction) {
+        int[] howCommonIsTheSymbol = new int[ALPHABET.length];
 
-        return null;
+        for (String line : lineBuffer) {
+
+            for (int j = 0; j < line.length(); j++) {
+                for (int i = 0; i < ALPHABET.length; i++) {
+                    if (line.charAt(j) == ALPHABET[i]) {
+                        howCommonIsTheSymbol[i]++;
+                    }
+                }
+            }
+        }
+
+        int[] howCommonIsTheSymbolCopy = Arrays.copyOf(howCommonIsTheSymbol, howCommonIsTheSymbol.length);
+        Arrays.sort(howCommonIsTheSymbolCopy);
+        int numberOfOptionsUsed = 10;
+        int[] characterNumberInArray = new int[numberOfOptionsUsed];
+
+        for (int i = 0; i < characterNumberInArray.length; i++) {
+            for (int j = 0; j < howCommonIsTheSymbol.length; j++) {
+                if (howCommonIsTheSymbolCopy[howCommonIsTheSymbolCopy.length - i - 1] == howCommonIsTheSymbol[j]) {
+                    characterNumberInArray[i] = j + 1;
+                }
+            }
+        }
+
+        int[] decryptionKeys = Arrays.copyOf(characterNumberInArray, characterNumberInArray.length);
+
+        // в данном конкретном случае массив
+        // characterNumberInArray уже содержит ключ
+        // так как я выбра пробел для вычисления ключа, а он находится под
+        // номером сорок
+
+        List<String> newLineBuffer = new ArrayList<>();
+        for (int i = 0; i < decryptionKeys.length; i++) {
+
+            List<String> decryptionOption  = workByKey(decryptionKeys[i], lineBuffer, flagToSelectAction);
+
+            newLineBuffer.add("Option " + i + 1);
+
+            newLineBuffer.addAll(decryptionOption);
+
+        }
+
+        return newLineBuffer;
     }
 
     private int enterTheKey() {

@@ -94,7 +94,7 @@ public class Dialogue {
                 throw new Exception();
             }
         } catch (Exception e) {
-            System.out.println("Please specify YES or NO");
+            System.out.println("Please specify YES or NO.");
             setUpTheProgram(firstSetting);
         }
     }
