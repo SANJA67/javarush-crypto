@@ -12,24 +12,26 @@ public class Crypto {
             'ъ', 'ы', 'ь', 'э', 'я', '.', ',', '«', '»', '"', '\'', ':', '!', '?', ' '};
     private int characterNumber;
     private static final int NUMBER_OF_CHARACTERS_IN_THE_ARRAY = 10;
+    int key = 0;
+    List<String> lineBufferConverted;
 
-    public List<String> encrypts(List<String> lineBuffer, boolean flagToSelectAction) {
+    public List<String> encrypts(List<String> lineBuffer, boolean flagToSelectAction, boolean flagToSelectMethod) {
+
+        if (!flagToSelectAction && !flagToSelectMethod) {
+            lineBufferConverted = decodingByStatisticalMethod();
+        } else {
+            lineBufferConverted = workByKey(enterTheKey(), lineBuffer, flagToSelectAction);
+
+        }
+       return lineBufferConverted;
+    }
+
+    private List<String> workByKey(int key, List<String> lineBuffer, boolean flagToSelectAction) {
 
         List<String> copyLineBuffer = new ArrayList<>(lineBuffer);
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the encryption key.");
-        int key = 0;
-
-        try {
-            key = scanner.nextInt();
-        } catch (InputMismatchException e) {
-            System.out.println("You didn't enter a number.");
-            encrypts(lineBuffer, flagToSelectAction);
-        }
-
         lineBuffer.clear();
         char[] encryptedLine;
-        boolean uppercase = true;
+        boolean upperCase = true;
         boolean lowerCase = false;
 
         for (String line : copyLineBuffer) {
@@ -42,7 +44,7 @@ public class Crypto {
 
                     if (Character.isUpperCase(line.charAt(i))) {
                         encryptedLine[i] =
-                                Character.toUpperCase(ALPHABET[determineEncodingIndex(key, flagToSelectAction, uppercase)]);
+                                Character.toUpperCase(ALPHABET[determineEncodingIndex(key, flagToSelectAction, upperCase)]);
                     } else {
                         encryptedLine[i] = ALPHABET[determineEncodingIndex(key, flagToSelectAction, lowerCase)];
                     }
@@ -53,7 +55,25 @@ public class Crypto {
             lineBuffer.add(new String(encryptedLine));
         }
         return lineBuffer;
+    }
 
+    private List<String> decodingByStatisticalMethod() {
+
+        return null;
+    }
+
+    private int enterTheKey() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the encryption key.");
+
+
+        try {
+            key = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("You didn't enter a number.");
+            enterTheKey();
+        }
+        return key;
     }
 
     private int determineEncodingIndex(int key, boolean flagToSelectAction, boolean flag) {

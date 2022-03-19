@@ -8,33 +8,67 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Dialogue {
+
+    private static final String FIRST_SETTING = "Select actions encrypt or decrypt:\n" +
+            "encrypt enter \"YES\" or decipher enter \"NO\"";
+    private static final String SECOND_SETTINGS = "How to decrypt\n" +
+            "if by key enter \"YES\" если статическим методом введите \"NO\"";
+
     private List<String> lineBuffer = new ArrayList<>();
+
     private boolean flagToSelectAction = true;
+    private boolean flagToSelectMethod = true;
+
+    Scanner scanner = new Scanner(System.in);
+    String workWithFile;
+    String result;
+
+
+    String flag;
 
     public void start() {
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Select actions to encrypt or decrypt:");
-        System.out.print("encrypt enter \"YES\" or decipher enter \"NO\"");
-        String flag = null;
+        setUpTheProgram(FIRST_SETTING);
 
-        try {
-            flag = scanner.nextLine();
-            if (!(flag.equals("YES")) && !(flag.equals("NO"))) {
-                throw new Exception("Please specify YES or NO");
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            start();
-        }
         if (flag.equals("NO")) {
             flagToSelectAction = false;
         }
 
-        System.out.println("Enter the path to the file to read");
-        String workWithFile = scanner.nextLine();
-        System.out.println("Enter the path to the file to write");
-        String result = scanner.nextLine();
+        if (!flagToSelectAction) {
+            setUpTheProgram(SECOND_SETTINGS);
+
+            if (flag.equals("NO")) {
+
+                flagToSelectMethod = false;
+
+            }
+        }
+
+        enterThePathToTheFileToRead("");
+
+        readDataFromFileAndSendForProcessing();
+
+        lineBuffer = new Crypto().encrypts(lineBuffer, flagToSelectAction, flagToSelectMethod);
+
+        enterThePathToTheFileToWriting("");
+
+        writingDataToAFileReceivedAfterProcessing();
+    }
+
+    private void writingDataToAFileReceivedAfterProcessing() {
+        try (BufferedWriter writter = new BufferedWriter(new FileWriter(result))) {
+            for (String value : lineBuffer) {
+                writter.write(value + "\n");
+            }
+        } catch (IOException e) {
+
+            System.out.println(e + "File path is incorrect");
+
+            enterThePathToTheFileToWriting("File not found");
+        }
+    }
+
+    private void readDataFromFileAndSendForProcessing() {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(workWithFile))) {
             String line;
@@ -42,20 +76,38 @@ public class Dialogue {
 
                 lineBuffer.add(line);
             }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {
 
-        lineBuffer = new Crypto().encrypts(lineBuffer, flagToSelectAction);
+            System.out.println(e + "File path is incorrect");
 
-        try (BufferedWriter writter = new BufferedWriter(new FileWriter(result))) {
-            for (String value : lineBuffer) {
-                writter.write(value + "\n");
+            enterThePathToTheFileToRead("File not found");
+        }
+    }
+
+
+    private void setUpTheProgram(String firstSetting) {
+        System.out.println(firstSetting);
+
+        try {
+            flag = scanner.nextLine();
+            if (!(flag.equals("YES")) && !(flag.equals("NO"))) {
+                throw new Exception();
             }
+        } catch (Exception e) {
+            System.out.println("Please specify YES or NO");
+            setUpTheProgram(firstSetting);
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+    }
+
+    private void enterThePathToTheFileToRead(String message) {
+        System.out.println(message);
+        System.out.println("Enter the path to the file to read");
+        workWithFile = scanner.nextLine();
+    }
+
+    private void enterThePathToTheFileToWriting(String message) {
+        System.out.println(message);
+        System.out.println("Enter the path to the file to write");
+        result = scanner.nextLine();
     }
 }
