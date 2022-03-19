@@ -12,7 +12,7 @@ public class Dialogue {
     private static final String FIRST_SETTING = "Select actions encrypt or decrypt:\n" +
             "encrypt enter \"YES\" or decipher enter \"NO\"";
     private static final String SECOND_SETTINGS = "How to decrypt\n" +
-            "if by key enter \"YES\" если статическим методом введите \"NO\"";
+            "if by key enter \"YES\" if static method type \"NO\"";
 
     private List<String> lineBuffer = new ArrayList<>();
 
