@@ -62,7 +62,7 @@ public class Crypto {
         for (String line : lineBuffer) {
 
             for (int j = 0; j < line.length(); j++) {
-                for (int i = 0; i < ALPHABET.length; i++) {
+                for (int i = 0; i < ALPHABET.length; i++) {     // здесь производят то почёт сколько раз символ встречается в тексте
                     if (line.charAt(j) == ALPHABET[i]) {
                         howCommonIsTheSymbol[i]++;
                     }
@@ -72,8 +72,9 @@ public class Crypto {
 
         int[] howCommonIsTheSymbolCopy = Arrays.copyOf(howCommonIsTheSymbol, howCommonIsTheSymbol.length);
         Arrays.sort(howCommonIsTheSymbolCopy);
-        int numberOfOptionsUsed = 10;
-        int[] characterNumberInArray = new int[numberOfOptionsUsed];
+        int numberOfOptionsUsed = 10;                           // выбираю 10 символов чаще всего повторяющихся в тексте
+        int[] characterNumberInArray = new int[numberOfOptionsUsed]; // в этом массиве сохраняются индексы чаще всего
+                                                                    // повторяющихся символов, индексы массива алфавит
 
         for (int i = 0; i < characterNumberInArray.length; i++) {
             for (int j = 0; j < howCommonIsTheSymbol.length; j++) {
@@ -88,14 +89,16 @@ public class Crypto {
         // в данном конкретном случае массив
         // characterNumberInArray уже содержит ключ
         // так как я выбра пробел для вычисления ключа, а он находится под
-        // номером сорок
+        // номером сорок, если бы символ на которой я ориентируюсь, находился бы под другим индексом мне
+        // бы пришлось сделать дополнительный расчёт
 
-        List<String> newLineBuffer = new ArrayList<>();
+        List<String> newLineBuffer = new ArrayList<>(); // здесь сохраняются все варианты расшифровки
         for (int i = 0; i < decryptionKeys.length; i++) {
 
             List<String> decryptionOption  = workByKey(decryptionKeys[i], lineBuffer, flagToSelectAction);
-
-            newLineBuffer.add("Option " + i + 1);
+            // строка выше вызывает метод расшифровки по ключу отправляй оттуда
+            // вариант ключа и получает оттуда массив который свою очередь сохраняется в массиве newLineBuffer
+            newLineBuffer.add("Option " + i + 1);   // цифра 1 используется для читабельность и файла
 
             newLineBuffer.addAll(decryptionOption);
 
@@ -121,32 +124,33 @@ public class Crypto {
     private int determineEncodingIndex(int key, boolean flagToSelectAction, boolean flag) {
 
         if (!flagToSelectAction) {
-            key = -1 * key;
+            key = -1 * key;                 // если мы расшифровываем, то делаем ключ отрицательным
         }
 
         int arrayLengthAdjustment = 1;
-        int index = characterNumber + key;
-        int noita = NUMBER_OF_CHARACTERS_IN_THE_ARRAY;
+        int intermediateIndex = characterNumber + key;
+        int noita = NUMBER_OF_CHARACTERS_IN_THE_ARRAY;      // в случае если буква относится к букве верхнего регистра
+                                                            // мы отнимаем количество символов несоответствующих букве из
+                                                            // массива алфавит для того чтобы потом можно было её расшифровать
 
+        if (flag) { //если буква верхнего регистра
+            int finishedIndex1 = intermediateIndex % (ALPHABET.length - noita) - arrayLengthAdjustment;
 
-        if (flag) {
-            int output1 = index % (ALPHABET.length - noita) - arrayLengthAdjustment;
-
-            if (output1 < 0) {
-                output1 = output1 + (ALPHABET.length - noita);
+            if (finishedIndex1 < 0) {
+                finishedIndex1 = finishedIndex1 + (ALPHABET.length - noita);
             }
 
-            return output1;
+            return finishedIndex1;
 
         } else {
 
-            int output2 = index % (ALPHABET.length) - arrayLengthAdjustment;
+            int finishedIndex2 = intermediateIndex % (ALPHABET.length) - arrayLengthAdjustment;
 
-            if (output2 < 0) {
-                output2 = output2 + (ALPHABET.length);
+            if (finishedIndex2 < 0) {
+                finishedIndex2 = finishedIndex2 + (ALPHABET.length);
             }
 
-            return output2;
+            return finishedIndex2;
         }
     }
 
@@ -160,7 +164,7 @@ public class Crypto {
             characterNumber++;
 
             if (characterFromArray.equals(symbol)) {
-                return true;
+                return true; // если символ найден в массиве алфавит значит true
             }
         }
 

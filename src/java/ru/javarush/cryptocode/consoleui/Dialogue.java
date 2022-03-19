@@ -46,44 +46,11 @@ public class Dialogue {
 
         enterThePathToTheFileToRead("");
 
-        readDataFromFileAndSendForProcessing();
-
         lineBuffer = new Crypto().encrypts(lineBuffer, flagToSelectAction, flagToSelectMethod);
 
         enterThePathToTheFileToWriting("");
 
-        writingDataToAFileReceivedAfterProcessing();
     }
-
-    private void writingDataToAFileReceivedAfterProcessing() {
-        try (BufferedWriter writter = new BufferedWriter(new FileWriter(result))) {
-            for (String value : lineBuffer) {
-                writter.write(value + "\n");
-            }
-        } catch (IOException e) {
-
-            System.out.println(e + "File path is incorrect");
-
-            enterThePathToTheFileToWriting("File not found");
-        }
-    }
-
-    private void readDataFromFileAndSendForProcessing() {
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(workWithFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-
-                lineBuffer.add(line);
-            }
-        } catch (IOException e) {
-
-            System.out.println(e + "File path is incorrect");
-
-            enterThePathToTheFileToRead("File not found");
-        }
-    }
-
 
     private void setUpTheProgram(String firstSetting) {
         System.out.println(firstSetting);
@@ -103,11 +70,42 @@ public class Dialogue {
         System.out.println(message);
         System.out.println("Enter the path to the file to read");
         workWithFile = scanner.nextLine();
+        readDataFromFileAndSendForProcessing();
     }
 
     private void enterThePathToTheFileToWriting(String message) {
         System.out.println(message);
         System.out.println("Enter the path to the file to write");
         result = scanner.nextLine();
+        writingDataToAFileReceivedAfterProcessing();
+    }
+
+    private void readDataFromFileAndSendForProcessing() {
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(workWithFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+                lineBuffer.add(line);
+            }
+        } catch (IOException e) {
+
+            System.out.println(e + "File path is incorrect");
+
+            enterThePathToTheFileToRead("File not found");
+        }
+    }
+
+    private void writingDataToAFileReceivedAfterProcessing() {
+        try (BufferedWriter writter = new BufferedWriter(new FileWriter(result))) {
+            for (String value : lineBuffer) {
+                writter.write(value + "\n");
+            }
+        } catch (IOException e) {
+
+            System.out.println(e + "File path is incorrect");
+
+            enterThePathToTheFileToWriting("File not found");
+        }
     }
 }
