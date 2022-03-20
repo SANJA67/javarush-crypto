@@ -68,14 +68,14 @@ public class Dialogue {
 
     private void enterThePathToTheFileToRead(String message) {
         System.out.println(message);
-        System.out.println("Enter the path to the file to read");
+        System.out.println("Enter the path to the file to read:");
         workWithFile = scanner.nextLine();
         readDataFromFileAndSendForProcessing();
     }
 
     private void enterThePathToTheFileToWriting(String message) {
         System.out.println(message);
-        System.out.println("Enter the path to the file to write");
+        System.out.println("Enter the path to the file to write:");
         result = scanner.nextLine();
         writingDataToAFileReceivedAfterProcessing();
     }
