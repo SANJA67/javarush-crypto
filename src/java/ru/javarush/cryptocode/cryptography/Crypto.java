@@ -9,17 +9,15 @@ public class Crypto {
             'ъ', 'ы', 'ь', 'э', 'я', '.', ',', '«', '»', '"', '\'', ':', '!', '?', ' '};
 
     private int characterNumber;
-    private static final int NUMBER_OF_CHARACTERS_IN_THE_ARRAY = 10;
-    int key = 0;
 
-    List<String> lineBufferConverted;
+    public List<String> encrypts(List<String> lineBuffer, boolean flagToSelectAction, boolean flagToSelectMethod, Scanner scanner) {
 
-    public List<String> encrypts(List<String> lineBuffer, boolean flagToSelectAction, boolean flagToSelectMethod) {
+        List<String> lineBufferConverted;
 
         if (!flagToSelectAction && !flagToSelectMethod) {
             lineBufferConverted = decodingByStatisticalMethod(lineBuffer, flagToSelectAction);
         } else {
-            lineBufferConverted = workByKey(enterTheKey(), lineBuffer, flagToSelectAction);
+            lineBufferConverted = workByKey(enterTheKey(scanner), lineBuffer, flagToSelectAction);
 
         }
        return lineBufferConverted;
@@ -39,7 +37,7 @@ public class Crypto {
 
             for (int i = 0; i < line.length(); i++) {
 
-                if (checks(line.charAt(i))) {
+                if (checkingIfACharacterExistsInAnArray(line.charAt(i))) {
 
                     if (Character.isUpperCase(line.charAt(i))) {
                         encryptedLine[i] =
@@ -107,18 +105,20 @@ public class Crypto {
         return newLineBuffer;
     }
 
-    private int enterTheKey() {
-        Scanner scanner = new Scanner(System.in);
+    private int enterTheKey(Scanner scanner) {
+
         System.out.println("Enter the encryption key.");
 
-
         try {
-            key = scanner.nextInt();
+
+            return scanner.nextInt();
+
         } catch (InputMismatchException e) {
             System.out.println("You didn't enter a number.");
-            enterTheKey();
+            enterTheKey(scanner);
         }
-        return key;
+
+        return 0;
     }
 
     private int determineEncodingIndex(int key, boolean flagToSelectAction, boolean flag) {
@@ -129,15 +129,15 @@ public class Crypto {
 
         int arrayLengthAdjustment = 1;
         int intermediateIndex = characterNumber + key;
-        int noita = NUMBER_OF_CHARACTERS_IN_THE_ARRAY;      // в случае если буква относится к букве верхнего регистра
+        int numberOfCharactersInTheArray = 10;      // в случае если буква относится к букве верхнего регистра
                                                             // мы отнимаем количество символов несоответствующих букве из
                                                             // массива алфавит для того чтобы потом можно было её расшифровать
 
         if (flag) { //если буква верхнего регистра
-            int finishedIndex1 = intermediateIndex % (ALPHABET.length - noita) - arrayLengthAdjustment;
+            int finishedIndex1 = intermediateIndex % (ALPHABET.length - numberOfCharactersInTheArray) - arrayLengthAdjustment;
 
             if (finishedIndex1 < 0) {
-                finishedIndex1 = finishedIndex1 + (ALPHABET.length - noita);
+                finishedIndex1 = finishedIndex1 + (ALPHABET.length - numberOfCharactersInTheArray);
             }
 
             return finishedIndex1;
@@ -154,9 +154,9 @@ public class Crypto {
         }
     }
 
-    private boolean checks(Character symbol) {
+    private boolean checkingIfACharacterExistsInAnArray(Character symbol) {
 
-        characterNumber = 0;
+        characterNumber = 0;                                // не смог убрать из поля класса
         symbol = Character.toLowerCase(symbol);
 
         for (Character characterFromArray : ALPHABET) {
@@ -164,7 +164,7 @@ public class Crypto {
             characterNumber++;
 
             if (characterFromArray.equals(symbol)) {
-                return true; // если символ найден в массиве алфавит значит true
+                return true;                                // если символ найден в массиве алфавит значит true
             }
         }
 

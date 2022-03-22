@@ -9,78 +9,85 @@ import java.util.Scanner;
 
 public class Dialogue {
 
-    private static final String FIRST_SETTING = "Select actions encrypt or decrypt:\n" +
-            "encrypt enter \"YES\" or decipher enter \"NO\"";
-    private static final String SECOND_SETTINGS = "How to decrypt\n" +
-            "if by key enter \"YES\" if static method type \"NO\"";
-
-    private List<String> lineBuffer = new ArrayList<>();
-
-    private boolean flagToSelectAction = true;
-    private boolean flagToSelectMethod = true;
-
-    Scanner scanner = new Scanner(System.in);
-    String workWithFile;
-    String result;
-
-
-    String flag;
-
     public void start() {
 
-        setUpTheProgram(FIRST_SETTING);
+        Scanner scanner = new Scanner(System.in);
 
-        if (flag.equals("NO")) {
+        List<String> lineBuffer = new ArrayList<>();
+
+        String secondSetting = "How to decrypt\n if by key enter \"1\" if static method type \"2\"";
+        String firstSetting = "Select actions encrypt or decrypt:\n encrypt enter \"1\" or decipher enter \"2\"";
+
+        boolean flagToSelectAction = true;
+        boolean flagToSelectMethod = true;
+
+        String flag = chooseACourseOfAction(firstSetting, scanner);
+        if ("2".equals(flag)) {
+
             flagToSelectAction = false;
         }
 
-        if (!flagToSelectAction) {
-            setUpTheProgram(SECOND_SETTINGS);
+        flag = chooseACourseOfAction(secondSetting, scanner);
 
-            if (flag.equals("NO")) {
+        if (!flagToSelectAction) {
+
+            chooseACourseOfAction(secondSetting, scanner);
+
+            if ("2".equals(flag)) {
 
                 flagToSelectMethod = false;
-
             }
         }
 
-        enterThePathToTheFileToRead("");
+        enterThePathToTheFileToRead("", scanner, lineBuffer);
 
-        lineBuffer = new Crypto().encrypts(lineBuffer, flagToSelectAction, flagToSelectMethod);
+        lineBuffer = new Crypto().encrypts(lineBuffer, flagToSelectAction, flagToSelectMethod, scanner);
 
-        enterThePathToTheFileToWriting("");
+        enterThePathToTheFileToWriting("", scanner, lineBuffer);
 
     }
 
-    private void setUpTheProgram(String firstSetting) {
+    private String chooseACourseOfAction(String firstSetting, Scanner scanner) {
+
         System.out.println(firstSetting);
+        String flag = null;
 
         try {
             flag = scanner.nextLine();
-            if (!(flag.equals("YES")) && !(flag.equals("NO"))) {
+            if (!(flag.equals("1")) && !(flag.equals("2"))) {
                 throw new Exception();
             }
+            return flag;
         } catch (Exception e) {
-            System.out.println("Please specify YES or NO.");
-            setUpTheProgram(firstSetting);
+            System.out.println("Please specify 1 or 2.");
+            chooseACourseOfAction(firstSetting, scanner);
         }
+
+        return flag;
     }
 
-    private void enterThePathToTheFileToRead(String message) {
+    private void enterThePathToTheFileToRead(String message, Scanner scanner, List<String> lineBuffer) {
+
         System.out.println(message);
         System.out.println("Enter the path to the file to read:");
-        workWithFile = scanner.nextLine();
-        readDataFromFileAndSendForProcessing();
+
+        String workWithFile = scanner.nextLine();
+
+        readDataFromFileAndSendForProcessing(workWithFile, lineBuffer, scanner);
+
     }
 
-    private void enterThePathToTheFileToWriting(String message) {
+    private void enterThePathToTheFileToWriting(String message, Scanner scanner, List<String> lineBuffer) {
+
         System.out.println(message);
         System.out.println("Enter the path to the file to write:");
-        result = scanner.nextLine();
-        writingDataToAFileReceivedAfterProcessing();
+
+        String result = scanner.nextLine();
+
+        writingDataToAFileReceivedAfterProcessing(result, lineBuffer, scanner);
     }
 
-    private void readDataFromFileAndSendForProcessing() {
+    private void readDataFromFileAndSendForProcessing(String workWithFile, List<String> lineBuffer, Scanner scanner) {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(workWithFile))) {
             String line;
@@ -92,11 +99,12 @@ public class Dialogue {
 
             System.out.println(e + "File path is incorrect");
 
-            enterThePathToTheFileToRead("File not found");
+            enterThePathToTheFileToRead("File not found", scanner, lineBuffer);
         }
     }
 
-    private void writingDataToAFileReceivedAfterProcessing() {
+    private void writingDataToAFileReceivedAfterProcessing(String result, List<String> lineBuffer, Scanner scanner) {
+
         try (BufferedWriter writter = new BufferedWriter(new FileWriter(result))) {
             for (String value : lineBuffer) {
                 writter.write(value + "\n");
@@ -105,7 +113,7 @@ public class Dialogue {
 
             System.out.println(e + "File path is incorrect");
 
-            enterThePathToTheFileToWriting("File not found");
+            enterThePathToTheFileToWriting("File not found", scanner, lineBuffer);
         }
     }
 }
