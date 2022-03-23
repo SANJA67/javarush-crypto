@@ -17,13 +17,13 @@ public class Crypto {
         if (!flagToSelectAction && !flagToSelectMethod) {
             lineBufferConverted = decodingByStatisticalMethod(lineBuffer, flagToSelectAction);
         } else {
-            lineBufferConverted = workByKey(enterTheKey(scanner), lineBuffer, flagToSelectAction);
+            lineBufferConverted = encryptDecryptWithKey(enterTheKey(scanner), lineBuffer, flagToSelectAction);
 
         }
        return lineBufferConverted;
     }
 
-    private List<String> workByKey(int key, List<String> lineBuffer, boolean flagToSelectAction) {
+    private List<String> encryptDecryptWithKey(int key, List<String> lineBuffer, boolean flagToSelectAction) {
 
         List<String> copyLineBuffer = new ArrayList<>(lineBuffer);
         lineBuffer.clear();
@@ -55,45 +55,13 @@ public class Crypto {
     }
 
     private List<String> decodingByStatisticalMethod(List<String> lineBuffer, boolean flagToSelectAction) {
-        int[] howCommonIsTheSymbol = new int[ALPHABET.length];
-
-        for (String line : lineBuffer) {
-
-            for (int j = 0; j < line.length(); j++) {
-                for (int i = 0; i < ALPHABET.length; i++) {     // здесь производят то почёт сколько раз символ встречается в тексте
-                    if (line.charAt(j) == ALPHABET[i]) {
-                        howCommonIsTheSymbol[i]++;
-                    }
-                }
-            }
-        }
-
-        int[] howCommonIsTheSymbolCopy = Arrays.copyOf(howCommonIsTheSymbol, howCommonIsTheSymbol.length);
-        Arrays.sort(howCommonIsTheSymbolCopy);
-        int numberOfOptionsUsed = 10;                           // выбираю 10 символов чаще всего повторяющихся в тексте
-        int[] characterNumberInArray = new int[numberOfOptionsUsed]; // в этом массиве сохраняются индексы чаще всего
-                                                                    // повторяющихся символов, индексы массива алфавит
-
-        for (int i = 0; i < characterNumberInArray.length; i++) {
-            for (int j = 0; j < howCommonIsTheSymbol.length; j++) {
-                if (howCommonIsTheSymbolCopy[howCommonIsTheSymbolCopy.length - i - 1] == howCommonIsTheSymbol[j]) {
-                    characterNumberInArray[i] = j + 1;
-                }
-            }
-        }
-
-        int[] decryptionKeys = Arrays.copyOf(characterNumberInArray, characterNumberInArray.length);
-
-        // в данном конкретном случае массив
-        // characterNumberInArray уже содержит ключ
-        // так как я выбра пробел для вычисления ключа, а он находится под
-        // последним в массиве, если бы символ на которой я ориентируюсь, находился бы под другим индексом мне
-        // бы пришлось сделать дополнительный расчёт
-
         List<String> newLineBuffer = new ArrayList<>(); // здесь сохраняются все варианты расшифровки
-        for (int i = 1; i < decryptionKeys.length +1; i++) {// цифра 1 используется для читабельность и файла
+        int[] decryptionKeys = findValueOfKeys(lineBuffer);
 
-            List<String> decryptionOption  = workByKey(decryptionKeys[i], lineBuffer, flagToSelectAction);
+
+        for (int i = 1; i < decryptionKeys.length + 1; i++) {// цифра 1 используется для читабельность и файла
+
+            List<String> decryptionOption  = encryptDecryptWithKey(decryptionKeys[i - 1], lineBuffer, flagToSelectAction);
             // строка выше вызывает метод расшифровки по ключу отправляет в метод
             // вариант ключа и получает оттуда коллекцию который свою очередь сохраняется в коллекции newLineBuffer
             newLineBuffer.add("Option " + i);
@@ -105,13 +73,46 @@ public class Crypto {
         return newLineBuffer;
     }
 
+    private int[] findValueOfKeys(List<String> lineBuffer) {
+        int[] howCommonIsTheSymbol = new int[ALPHABET.length];
+
+        for (String line : lineBuffer) {
+
+            for (int j = 0; j < line.length(); j++) {
+                for (int i = 0; i < ALPHABET.length; i++) {
+                    if (line.charAt(j) == ALPHABET[i]) {
+                        howCommonIsTheSymbol[i]++;
+                    }
+                }
+            }
+        }
+
+        int[] howCommonIsTheSymbolCopy = Arrays.copyOf(howCommonIsTheSymbol, howCommonIsTheSymbol.length);
+        Arrays.sort(howCommonIsTheSymbolCopy);
+        int numberOfOptionsUsed = 10;                           // выбираю 10 символов чаще всего повторяющихся в тексте
+        int[] characterNumberInArray = new int[numberOfOptionsUsed]; // в этом массиве сохраняются индексы чаще всего
+        // повторяющихся символов, индексы массива алфавит
+
+        for (int i = 0; i < characterNumberInArray.length; i++) {
+            for (int j = 0; j < howCommonIsTheSymbol.length; j++) {
+                if (howCommonIsTheSymbolCopy[howCommonIsTheSymbolCopy.length - i - 1] == howCommonIsTheSymbol[j]) {
+                    characterNumberInArray[i] = j + 1;
+                }
+            }
+        }
+
+        return Arrays.copyOf(characterNumberInArray, characterNumberInArray.length);
+    }
+
+
     private int enterTheKey(Scanner scanner) {
 
         System.out.println("Enter the encryption key.");
 
         try {
-
-            return scanner.nextInt();
+            int key = scanner.nextInt();
+            scanner.nextLine();
+            return key;
 
         } catch (InputMismatchException e) {
             System.out.println("You didn't enter a number.");

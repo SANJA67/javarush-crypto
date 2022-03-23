@@ -27,11 +27,9 @@ public class Dialogue {
             flagToSelectAction = false;
         }
 
-        flag = chooseACourseOfAction(secondSetting, scanner);
-
         if (!flagToSelectAction) {
 
-            chooseACourseOfAction(secondSetting, scanner);
+            flag = chooseACourseOfAction(secondSetting, scanner);
 
             if ("2".equals(flag)) {
 
@@ -54,7 +52,7 @@ public class Dialogue {
 
         try {
             flag = scanner.nextLine();
-            if (!(flag.equals("1")) && !(flag.equals("2"))) {
+            if (!("1".equals(flag)) && !("2".equals(flag))) {
                 throw new Exception();
             }
             return flag;
@@ -71,9 +69,9 @@ public class Dialogue {
         System.out.println(message);
         System.out.println("Enter the path to the file to read:");
 
-        String workWithFile = scanner.nextLine();
+        String filenameToConvert = scanner.nextLine();
 
-        readDataFromFileAndSendForProcessing(workWithFile, lineBuffer, scanner);
+        readDataFromFileAndSendForProcessing(filenameToConvert, lineBuffer, scanner);
 
     }
 
@@ -82,14 +80,14 @@ public class Dialogue {
         System.out.println(message);
         System.out.println("Enter the path to the file to write:");
 
-        String result = scanner.nextLine();
+        String fileNameForConversionResult = scanner.nextLine();
 
-        writingDataToAFileReceivedAfterProcessing(result, lineBuffer, scanner);
+        writingDataToAFileReceivedAfterProcessing(fileNameForConversionResult, lineBuffer, scanner);
     }
 
-    private void readDataFromFileAndSendForProcessing(String workWithFile, List<String> lineBuffer, Scanner scanner) {
+    private void readDataFromFileAndSendForProcessing(String filenameToConvert, List<String> lineBuffer, Scanner scanner) {
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(workWithFile))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filenameToConvert))) {
             String line;
             while ((line = reader.readLine()) != null) {
 
@@ -103,15 +101,16 @@ public class Dialogue {
         }
     }
 
-    private void writingDataToAFileReceivedAfterProcessing(String result, List<String> lineBuffer, Scanner scanner) {
+    private void writingDataToAFileReceivedAfterProcessing
+            (String fileNameForConversionResult, List<String> lineBuffer, Scanner scanner) {
 
-        try (BufferedWriter writter = new BufferedWriter(new FileWriter(result))) {
+        try (BufferedWriter writter = new BufferedWriter(new FileWriter(fileNameForConversionResult))) {
             for (String value : lineBuffer) {
                 writter.write(value + "\n");
             }
         } catch (IOException e) {
 
-            System.out.println(e + "File path is incorrect");
+            System.out.println(e + " File path is incorrect");
 
             enterThePathToTheFileToWriting("File not found", scanner, lineBuffer);
         }
